@@ -365,6 +365,11 @@ function print_sub_menu_entry($menu_array)
 
             // Menu level 0
             if ($menu_array[$i]['level'] == 0) {
+
+                if (!isset($lastlevel)) {
+                    $lastlevel = 0;
+                }
+
                 if ($menu_array[$i]['enabled']) {     // Enabled so visible
                     if ($lastlevel == 0) {
                         print '</li>';
@@ -403,6 +408,10 @@ function print_sub_menu_entry($menu_array)
                 if ($menu_array[$i]['enabled']) {     // Enabled so visible, except if parent was not enabled.
                     $currentlevel = $menu_array[$i]['level'];
 
+                    if (!isset($lastlevel)) {
+                        $lastlevel = 0;
+                    }
+
                     if ($currentlevel == $lastlevel) {
                         print '</li>';
                         print '<li>';
@@ -419,6 +428,7 @@ function print_sub_menu_entry($menu_array)
 
                         print '<li>';
                     }
+
 
                     print '<a class="vmenu" href="' . $url . '"' . ($menu_array[$i]['target'] ? ' target="' . $menu_array[$i]['target'] . '"' : '') . '>';
 
