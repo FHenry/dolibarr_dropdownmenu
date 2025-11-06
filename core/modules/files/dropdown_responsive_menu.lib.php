@@ -429,7 +429,6 @@ function print_sub_menu_entry($menu_array)
                         print '<li>';
                     }
 
-
                     print '<a class="vmenu" href="' . $url . '"' . ($menu_array[$i]['target'] ? ' target="' . $menu_array[$i]['target'] . '"' : '') . '>';
 
                     if (stripos($menu_array[$i]['titre'], 'list') !== false) print '<i class="fas fa-list"></i>';
