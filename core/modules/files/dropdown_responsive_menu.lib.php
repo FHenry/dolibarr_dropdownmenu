@@ -534,7 +534,7 @@ function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
 
 
     // We update newmenu for special dynamic menus
-    if ($conf->banque->enabled && $user->rights->banque->lire && $mainmenu == 'bank') {    // Entry for each bank account
+    if (isModEnabled("banque") && $user->hasRight('banque','lire') && $mainmenu == 'bank') {    // Entry for each bank account
         include_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
 
         $sql = "SELECT rowid, label, courant, rappro, courant";
@@ -548,13 +548,13 @@ function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
             $numr = $db->num_rows($resql);
             $i = 0;
 
-            if ($numr > 0) $newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->rights->banque->lire);
+            if ($numr > 0) $newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->hasRight('banque','lire'));
 
             while ($i < $numr) {
                 $objp = $db->fetch_object($resql);
-                $newmenu->add('/compta/bank/card.php?id=' . $objp->rowid, $objp->label, 1, $user->rights->banque->lire);
+                $newmenu->add('/compta/bank/card.php?id=' . $objp->rowid, $objp->label, 1, $user->hasRight('banque','lire'));
                 if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos)) {  // If not cash account and not closed and can be reconciliate
-                    $newmenu->add('/compta/bank/bankentries_list.php?id=' . $objp->rowid, $langs->trans("Conciliate"), 2, $user->rights->banque->consolidate);
+                    $newmenu->add('/compta/bank/bankentries_list.php?id=' . $objp->rowid, $langs->trans("Conciliate"), 2, $user->hasRight('banque','consolidate'));
                 }
                 $i++;
             }
@@ -562,8 +562,8 @@ function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
         $db->free($resql);
     }
 
-    if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') {    // Entry in accountancy journal for each bank account
-        $newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy', 10);
+    if (isModEnabled('accounting') && !empty($user->hasRight('accounting','comptarapport','lire')) && $mainmenu == 'accountancy') {    // Entry in accountancy journal for each bank account
+        $newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting','comptarapport','lire'), '', 'accountancy', 'accountancy', 10);
 
         // Multi journal
         $sql = "SELECT rowid, code, label, nature";
@@ -584,10 +584,10 @@ function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
                     $nature = '';
 
                     // Must match array $sourceList defined into journals_list.php
-                    if ($objp->nature == 2 && !empty($conf->facture->enabled)) $nature = "sells";
-                    if ($objp->nature == 3 && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))) $nature = "purchases";
-                    if ($objp->nature == 4 && !empty($conf->banque->enabled)) $nature = "bank";
-                    if ($objp->nature == 5 && !empty($conf->expensereport->enabled)) $nature = "expensereports";
+                    //if ($objp->nature == 2 && isModEnabled('facture')) $nature = "sells";
+                    if ($objp->nature == 3 && (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))) $nature = "purchases";
+                    if ($objp->nature == 4 && isModEnabled('banque')) $nature = "bank";
+                    if ($objp->nature == 5 && isModEnabled('expensereport')) $nature = "expensereports";
                     if ($objp->nature == 1) $nature = "various";
                     if ($objp->nature == 8) $nature = "inventory";
                     if ($objp->nature == 9) $nature = "hasnew";
@@ -600,19 +600,19 @@ function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
                     if ($nature) {
                         $langs->load('accountancy');
                         $journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
-                        $newmenu->add('/accountancy/journal/' . $nature . 'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal=' . $objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
+                        $newmenu->add('/accountancy/journal/' . $nature . 'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal=' . $objp->rowid, $journallabel, 2, $user->hasRight('accounting','comptarapport','lire'));
                     }
                     $i++;
                 }
             } else {
                 // Should not happend. Entries are added
-                $newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
+                $newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->hasRight('accounting','comptarapport','lire'));
             }
         } else dol_print_error($db);
         $db->free($resql);
     }
 
-    if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp') {    // Entry for FTP
+    if (isModEnabled('ftp') && $mainmenu == 'ftp') {    // Entry for FTP
         $MAXFTP = 20;
         $i = 1;
         while ($i <= $MAXFTP) {

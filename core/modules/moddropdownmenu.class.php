@@ -52,7 +52,7 @@ class modDropDownMenu extends DolibarrModules
         $this->descriptionlong = "Drop Down Menu";
         $this->editor_name = 'Florian Dufourg';
         $this->editor_url = 'https://www.gnl-solutions.com.com';
-        $this->version = '2.2';
+        $this->version = '2.3';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->picto = 'generic';
         $this->module_parts = array(
@@ -81,8 +81,8 @@ class modDropDownMenu extends DolibarrModules
         $this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
         $this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
         $this->langfiles = '';
-        $this->phpmin = array(5, 5); // Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(10); // Minimum version of Dolibarr required by module
+        $this->phpmin = array(7, 4); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(20); // Minimum version of Dolibarr required by module
         $this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
         $this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 
